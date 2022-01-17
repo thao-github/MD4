@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <style type="text/css">
+        #container {
+            width: 50%;
+            position: relative;
+        }
+
+        #container img {
+            width: 50%;
+            height: auto;
+        }
+
+        #container canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+
+<body>
+<h3>Edit Student</h3>
+
+<div id="form">
+    <form th:action="@{/edit}" th:object="${student}"
+          method="POST" novalidate="novalidate" enctype="multipart/form-data">
+        <div hidden>
+            <label>ID</label>
+            <input type="text" th:field="*{id}"/>
+        </div>
+        <div>
+            <label>Name</label>
+            <input type="text" th:field="*{name}"/>
+        </div>
+        <div>
+            <label>Age</label>
+            <input type="text" th:field="*{age}"/>
+        </div>
+        <div>
+            <select name="idClassroom">
+                <option th:each="c:${classrooms}" th:value="${c.id}" th:text="${c.name}">
+
+                </option>
+            </select>
+        </div>
+        <div>
+            <label>Image</label> <br>
+            <input type="file" name="upImg" id="file-input"/>
+        </div>
+
+        <div id="container"></div>
+
+        <input type="submit" value="Edit"/>
+    </form>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.js"
+        integrity="sha256-JOJ7NmVm2chxYZ1KPcAYd2bwVK7NaFj9QKMp7DClews=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+<script>
+    const container = document.querySelector('#container')
+    const fileInput = document.querySelector('#file-input')
+    fileInput.addEventListener('change', async (e) => {
+        const file = fileInput.files[0];
+
+        const image = await faceapi.bufferToImage(file)
+        const canvas = faceapi.createCanvasFromMedia(image)
+
+        container.innerHTML = ''
+        container.append(image);
+        container.append(canvas);
+
+        const size = {width: image.width, height: image.height}
+        faceapi.matchDimensions(canvas, size)
+    })
+</script>
+</body>
+</html>
